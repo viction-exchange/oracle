@@ -1,10 +1,11 @@
 const ethers = require('ethers')
 const { EvmPriceServiceConnection } = require('./EvmPriceServiceConnection')
+const { AutoNonceWallet } = require('./AutoNonceWallet')
 const PythPriceUpdater = require('../deployments/viction/PythPriceUpdater.json')
 
 const hermes = new EvmPriceServiceConnection('https://hermes.pyth.network')
 const provider = new ethers.providers.JsonRpcProvider('https://rpc.viction.xyz', 88)
-const signer = new ethers.Wallet(process.env.DEPLOYER_KEY, provider)
+const signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
 const updater = new ethers.Contract(PythPriceUpdater.address, PythPriceUpdater.abi, provider)
 
 const priceIds = [

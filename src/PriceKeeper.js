@@ -30,8 +30,8 @@ async function loop() {
       await run()
     } catch (err) {
       console.error('Error', err)
-      await sleep(3000)
     }
+    await sleep(3000)
   }
 }
 

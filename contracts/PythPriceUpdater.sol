@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.17;
 
+import {
+    SafeERC20,
+    IERC20
+} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IPyth} from "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 import {PythStructs} from "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
 import {PriceFeed} from "./PriceFeed.sol";
 
 contract PythPriceUpdater is AccessControl {
+    using SafeERC20 for IERC20;
+
     event NewPriceFeed(address token, bytes32 priceId, address priceFeed);
     event PriceUpdate(address token, int256 price, address priceFeed);
 
@@ -22,6 +28,8 @@ contract PythPriceUpdater is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(UPDATER_ROLE, msg.sender);
     }
+
+    receive() external payable {}
 
     function deployPriceFeed(
         address token,
@@ -53,5 +61,12 @@ contract PythPriceUpdater is AccessControl {
                 address(priceFeeds[priceId])
             );
         }
+    }
+
+    function recoverWrongTokens(
+        IERC20 token,
+        uint256 amount
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        token.safeTransfer(address(msg.sender), amount);
     }
 }

@@ -12,16 +12,27 @@ const priceIds = [
   '0x2dd14c7c38aa7066c7a508aac299ebcde5165b07d5d9f2d94dfbfe41f0bc5f2e', // C98
 ]
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
 async function run() {
   const priceFeeds = await hermes.getLatestPriceFeeds(priceIds)
   console.log(priceFeeds)
 
   const priceFeedUpdateData = await hermes.getPriceFeedsUpdateData(priceIds)
-  console.log(priceFeedUpdateData)
-
-  const tx = await updater.connect(signer).update(priceFeedUpdateData, priceIds, { value: 10000000 })
+  const tx = await updater.connect(signer).update(priceFeedUpdateData, priceIds)
   console.log(tx.hash)
   await tx.wait()
 }
 
-run()
+async function loop() {
+  while (true) {
+    try {
+      await run()
+    } catch (err) {
+      console.error('Error', err)
+      await sleep(3000)
+    }
+  }
+}
+
+loop()

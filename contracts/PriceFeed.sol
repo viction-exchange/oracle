@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.17;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import {IPriceFeed} from "./IPriceFeed.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IPriceFeed} from "./interfaces/IPriceFeed.sol";
 
 contract PriceFeed is Ownable, IPriceFeed {
     uint80 public roundId;

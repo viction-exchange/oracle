@@ -4,8 +4,11 @@ const { AutoNonceWallet } = require('./AutoNonceWallet')
 const PythPriceUpdater = require('../deployments/viction/PythPriceUpdater.json')
 
 const hermes = new EvmPriceServiceConnection('https://hermes.pyth.network')
-const provider = new ethers.providers.JsonRpcProvider('https://rpc.viction.xyz', 88)
-const signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
+const provider = new ethers.providers.JsonRpcProvider({
+  url: 'https://rpc.viction.xyz',
+  timeout: 10000
+}, 88)
+let signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
 const updater = new ethers.Contract(PythPriceUpdater.address, PythPriceUpdater.abi, provider)
 
 const priceIds = [
@@ -31,6 +34,7 @@ async function loop() {
       await run()
     } catch (err) {
       console.error('Error', err)
+      signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
     }
     await sleep(3000)
   }

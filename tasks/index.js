@@ -13,9 +13,9 @@ const TOKEN_LIST = {
 		priceDecimals: 8,
 		isStrictStable: false,
 	},
-	USDT: {
-		erc20: "0x381B31409e4D220919B2cFF012ED94d70135A59e",
-		priceId: "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
+	CUSD: {
+		erc20: "0xb3008E7156Ae2312b49B5200C3E1C3e80E529feb",
+		priceId: "0x8f218655050a1476b780185e89f19d2b1e1f49e9bd629efad6ac547a946bf6ab",
 		priceDecimals: 8,
 		isStrictStable: true,
 	}

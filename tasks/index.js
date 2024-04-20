@@ -32,11 +32,13 @@ const TOKEN_LIST = {
 
 task("print", "Print list price feeds")
 	.setAction(async ({ }, hre) => {
-		const pythPriceUpdaterAddress = (await hre.deployments.get("PythPriceUpdater")).address
-		const pythPriceUpdater = await hre.ethers.getContractAt('PythPriceUpdater', pythPriceUpdaterAddress)
+		const chainId = hre.network.config.chainId
+		const priceUpdaterName = chainId == 88 ? "PythPriceUpdater" : "UnsafePriceUpdater"
+		const priceUpdaterAddress = (await hre.deployments.get(priceUpdaterName)).address
+		const priceUpdater = await hre.ethers.getContractAt(priceUpdaterName, priceUpdaterAddress)
 
 		for (let token in TOKEN_LIST) {
-			const priceFeedAddress = await pythPriceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
+			const priceFeedAddress = await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
 			const priceFeed = await hre.ethers.getContractAt('PriceFeed', priceFeedAddress)
 			console.log(`${token}PriceFeed deployed at ${priceFeedAddress}. Last price ${await priceFeed.latestAnswer()}, roundId ${await priceFeed.latestRound()}`)
 		}
@@ -45,16 +47,17 @@ task("print", "Print list price feeds")
 task("deployPriceFeed", "Deploy price feeds")
 	.setAction(async ({ }, hre) => {
 		const chainId = hre.network.config.chainId
-		const pythPriceUpdaterAddress = (await hre.deployments.get("PythPriceUpdater")).address
-		const pythPriceUpdater = await hre.ethers.getContractAt('PythPriceUpdater', pythPriceUpdaterAddress)
+		const priceUpdaterName = chainId == 88 ? "PythPriceUpdater" : "UnsafePriceUpdater"
+		const priceUpdaterAddress = (await hre.deployments.get(priceUpdaterName)).address
+		const priceUpdater = await hre.ethers.getContractAt(priceUpdaterName, priceUpdaterAddress)
 
 		for (let token in TOKEN_LIST) {
-			const priceFeedAddress = await pythPriceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
+			const priceFeedAddress = await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
 			if (priceFeedAddress != hre.ethers.constants.AddressZero) {
 				console.log(`${token}PriceFeed deployed at ${priceFeedAddress}`)
 				continue
 			}
-			const tx = await pythPriceUpdater.deployPriceFeed(TOKEN_LIST[token].erc20[chainId], TOKEN_LIST[token].priceId)
+			const tx = await priceUpdater.deployPriceFeed(TOKEN_LIST[token].erc20[chainId], TOKEN_LIST[token].priceId)
 			console.log(`Deploy ${token}PriceFeed (tx: ${tx.hash})`)
 		}
 	})
@@ -62,15 +65,16 @@ task("deployPriceFeed", "Deploy price feeds")
 task("setTokenConfig", "Set vault price feed token config")
 	.setAction(async ({ }, hre) => {
 		const chainId = hre.network.config.chainId
-		const pythPriceUpdaterAddress = (await hre.deployments.get("PythPriceUpdater")).address
-		const pythPriceUpdater = await hre.ethers.getContractAt('PythPriceUpdater', pythPriceUpdaterAddress)
+		const priceUpdaterName = chainId == 88 ? "PythPriceUpdater" : "UnsafePriceUpdater"
+		const priceUpdaterAddress = (await hre.deployments.get(priceUpdaterName)).address
+		const priceUpdater = await hre.ethers.getContractAt(priceUpdaterName, priceUpdaterAddress)
 		const vaultPriceFeedAddress = (await hre.deployments.get("VaultPriceFeed")).address
 		const vaultPriceFeed = await hre.ethers.getContractAt('VaultPriceFeed', vaultPriceFeedAddress)
 
 		for (let token in TOKEN_LIST) {
 			const tx = await vaultPriceFeed.setTokenConfig(
 				TOKEN_LIST[token].erc20[chainId],
-				await pythPriceUpdater.priceFeeds(TOKEN_LIST[token].priceId),
+				await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId),
 				TOKEN_LIST[token].priceDecimals,
 				TOKEN_LIST[token].isStrictStable
 			)

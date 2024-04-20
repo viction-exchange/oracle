@@ -1,7 +1,7 @@
 const ethers = require('ethers')
 const { EvmPriceServiceConnection } = require('./EvmPriceServiceConnection')
 const { AutoNonceWallet } = require('./AutoNonceWallet')
-const PythPriceUpdater = require('../deployments/viction/PythPriceUpdater.json')
+const UnsafePriceUpdater = require('../deployments/victionTestnet/UnsafePriceUpdater.json')
 
 const hermes = new EvmPriceServiceConnection('https://hermes.pyth.network')
 const provider = new ethers.providers.JsonRpcProvider({
@@ -9,7 +9,7 @@ const provider = new ethers.providers.JsonRpcProvider({
   timeout: 10000,
 })
 let signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
-const updater = new ethers.Contract(PythPriceUpdater.address, PythPriceUpdater.abi, provider)
+const updater = new ethers.Contract(UnsafePriceUpdater.address, UnsafePriceUpdater.abi, provider)
 
 const priceIds = [
   '0xf80ba6864e3f1b36c873bcb2767079d5fb86cf04855e714b2a0f30d7e0830a24', // VIC
@@ -21,8 +21,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 async function run() {
   const priceFeeds = await hermes.getLatestPriceFeeds(priceIds)
-  const priceFeedUpdateData = await hermes.getPriceFeedsUpdateData(priceIds)
-  const tx = await updater.connect(signer).update(priceFeedUpdateData, priceIds)
+  const prices = priceFeeds.map((feed) => feed.price.price)
+  const tx = await updater.connect(signer).update(prices, priceIds)
   console.log(tx.hash, JSON.stringify(priceFeeds))
   await tx.wait()
 }

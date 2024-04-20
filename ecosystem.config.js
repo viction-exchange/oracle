@@ -15,7 +15,7 @@ module.exports = {
     },
     {
       name: "price-keeper-89",
-      script: "src/PriceKeeper.js",
+      script: "src/UnsafePriceKeeper.js",
       instances: 1,
       autorestart: true,
       max_memory_restart: "1000M",

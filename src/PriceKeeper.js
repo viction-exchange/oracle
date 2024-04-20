@@ -6,10 +6,10 @@ const PythPriceUpdater = require('../deployments/viction/PythPriceUpdater.json')
 const hermes = new EvmPriceServiceConnection('https://hermes.pyth.network')
 const provider = new ethers.providers.JsonRpcProvider(
   {
-    url: 'https://rpc.viction.xyz',
+    url: process.env.RPC_URL,
     timeout: 10000,
   },
-  88
+  process.env.CHAIN_ID
 )
 let signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
 const updater = new ethers.Contract(PythPriceUpdater.address, PythPriceUpdater.abi, provider)
@@ -38,7 +38,7 @@ async function loop() {
       console.error('Error', err)
       signer = new AutoNonceWallet(process.env.DEPLOYER_KEY, provider)
     }
-    await sleep(3000)
+    await sleep(10000)
   }
 }
 

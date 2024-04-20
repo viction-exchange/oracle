@@ -8,6 +8,6 @@ exports
 coverage
 coverage.json
 tasks/test.js
-src/test.js
+src/test*.js
 
 GasTest.*

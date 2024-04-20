@@ -30,6 +30,13 @@ const config: HardhatUserConfig = {
       accounts,
       live: true,
       saveDeployments: true,
+    },
+    victionTestnet: {
+      chainId: 89,
+      url: "https://rpc-testnet.viction.xyz",
+      accounts,
+      live: true,
+      saveDeployments: true,
     }
   },
   solidity: {

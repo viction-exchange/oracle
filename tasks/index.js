@@ -27,6 +27,22 @@ const TOKEN_LIST = {
 		priceId: "0x8f218655050a1476b780185e89f19d2b1e1f49e9bd629efad6ac547a946bf6ab",
 		priceDecimals: 8,
 		isStrictStable: true,
+	},
+	WBTC: {
+		erc20: {
+			89: "0xc0CF9cE564b2E5BE343296BfeC4f0Be1092bc4Ed"
+		},
+		priceId: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+		priceDecimals: 8,
+		isStrictStable: false,
+	},
+	WETH: {
+		erc20: {
+			89: "0x396Cfc29BAD6A23706a95C11B468C5b8e3891DE2"
+		},
+		priceId: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+		priceDecimals: 18,
+		isStrictStable: false,
 	}
 }
 
@@ -38,6 +54,7 @@ task("print", "Print list price feeds")
 		const priceUpdater = await hre.ethers.getContractAt(priceUpdaterName, priceUpdaterAddress)
 
 		for (let token in TOKEN_LIST) {
+			if (!TOKEN_LIST[token].erc20[chainId]) continue;
 			const priceFeedAddress = await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
 			const priceFeed = await hre.ethers.getContractAt('PriceFeed', priceFeedAddress)
 			console.log(`${token}PriceFeed deployed at ${priceFeedAddress}. Last price ${await priceFeed.latestAnswer()}, roundId ${await priceFeed.latestRound()}`)
@@ -52,6 +69,7 @@ task("deployPriceFeed", "Deploy price feeds")
 		const priceUpdater = await hre.ethers.getContractAt(priceUpdaterName, priceUpdaterAddress)
 
 		for (let token in TOKEN_LIST) {
+			if (!TOKEN_LIST[token].erc20[chainId]) continue;
 			const priceFeedAddress = await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId)
 			if (priceFeedAddress != hre.ethers.constants.AddressZero) {
 				console.log(`${token}PriceFeed deployed at ${priceFeedAddress}`)
@@ -72,6 +90,7 @@ task("setTokenConfig", "Set vault price feed token config")
 		const vaultPriceFeed = await hre.ethers.getContractAt('VaultPriceFeed', vaultPriceFeedAddress)
 
 		for (let token in TOKEN_LIST) {
+			if (!TOKEN_LIST[token].erc20[chainId]) continue;
 			const tx = await vaultPriceFeed.setTokenConfig(
 				TOKEN_LIST[token].erc20[chainId],
 				await priceUpdater.priceFeeds(TOKEN_LIST[token].priceId),

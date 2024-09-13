@@ -17,6 +17,14 @@ const priceIds = [
   '0x8f218655050a1476b780185e89f19d2b1e1f49e9bd629efad6ac547a946bf6ab', // CUSD
   '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43', // WBTC
   '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace', // WETH
+  '0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d', // WSOL
+  '0x8963217838ab4cf5cadc172203c1f0b763fbaa45f346d8ee50ba994bbcac3026', // WTON
+  '0x93da3352f9f1d105fdfe4971cfa80e9dd777bfc5d0f683ebb6e1294b92137bb7', // WAVAX
+  '0x67aed5a24fdad045475e7195c98a98aea119c763f272d4523f5bac93a4f33c2b', // WTRX
+  '0xdcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c', // DOGE
+  '0x8ac0c70fff57e9aefdf5edf44b51d62c2d433653cbb2cf5cc06bb115af04d221', // LINK
+  '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501', // UNI
+  '0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b', // USDT
 ]
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
